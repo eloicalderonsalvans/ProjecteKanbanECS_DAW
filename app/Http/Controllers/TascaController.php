@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tasca;
 use Illuminate\Http\Request;
+
 
 class TascaController extends Controller
 {
@@ -11,7 +13,8 @@ class TascaController extends Controller
      */
     public function index()
     {
-        //
+        $tasca = Tasca::all();
+        return view('tasca.index', compact('tasca'));
     }
 
     /**
