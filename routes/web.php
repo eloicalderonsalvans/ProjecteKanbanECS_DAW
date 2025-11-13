@@ -8,6 +8,6 @@ Route::get('/', function () {
 
 Route::get('/inici', function(){
 
-    return view('User.index');
+    return view('tasca.index');
 
 });
