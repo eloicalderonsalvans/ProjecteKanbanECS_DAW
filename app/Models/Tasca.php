@@ -9,7 +9,7 @@ class Tasca extends Model
 {
     use HasFactory;
 
-    protected  $fillable = ['titol','descripcio','prioritat','responsable','estat'];
+    protected  $fillable = ['titol','descripcio','prioritat','responsable','estat','posicio'];
 
     public function User(){
 
