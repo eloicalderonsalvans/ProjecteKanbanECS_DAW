@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tasca;
+// Afegim el model Responsable per poder-lo utilitzar al mètode edit i create
+use App\Models\Responsable; 
 use Illuminate\Http\Request;
 
 class TascaController extends Controller
@@ -12,7 +14,8 @@ class TascaController extends Controller
      */
     public function index()
     {
-        $tascas = Tasca::all(); // variable correcta per Blade
+        // variable correcta per Blade
+        $tascas = Tasca::all(); 
         return view('tasca.index', compact('tascas'));
     }
 
@@ -21,7 +24,9 @@ class TascaController extends Controller
      */
     public function create()
     {
-        return view('tasca.create');
+        // CARREGUEM TOTS ELS RESPONSABLES per al desplegable de la vista de creació
+        $responsables = Responsable::all();
+        return view('tasca.create', compact('responsables'));
     }
 
     /**
@@ -33,7 +38,8 @@ class TascaController extends Controller
             'titol' => 'required|string|max:255',
             'descripcio' => 'nullable|string',
             'prioritat' => 'nullable|string',
-            'responsable' => 'nullable|string',
+            // El camp 'responsable' ara hauria d'estar validat si és obligatori i si existeix com a ID
+            'responsable' => 'nullable|string', 
             'estat' => 'required|string',
         ]);
 
@@ -58,8 +64,14 @@ class TascaController extends Controller
      */
     public function edit(string $id)
     {
+        // 1. Recuperar la tasca
         $tasca = Tasca::findOrFail($id);
-        return view('tasca.edit', compact('tasca'));
+        
+        // 2. Recuperar la llista de responsables per al desplegable de la vista
+        $responsables = Responsable::all(); 
+        
+        // 3. Retornar la vista amb la tasca i la llista de responsables
+        return view('tasca.edit', compact('tasca', 'responsables'));
     }
 
     /**

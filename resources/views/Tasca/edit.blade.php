@@ -144,9 +144,27 @@
                 </select>
             </div>
             
+            <!-- CANVI CLAU: Desplegable de responsables -->
             <div>
                 <label for="responsable">Responsable:</label>
-                <input type="text" id="responsable" name="responsable" value="{{ $tasca->responsable }}">
+                <select id="responsable" name="responsable">
+                    @if (empty($responsables))
+                        <!-- Aquesta opció es mostra si el controlador no passa la variable $responsables -->
+                        <option value="{{ $tasca->responsable }}" selected>
+                            {{ $tasca->responsable }} (No hi ha llista de responsables disponible)
+                        </option>
+                    @else
+                        @foreach ($responsables as $responsable)
+                            <!-- Assumim que $responsable té un camp 'nom' o que és simplement una cadena -->
+                            <option 
+                                value="{{ $responsable->nom ?? $responsable }}" 
+                                {{ ($responsable->nom ?? $responsable) === $tasca->responsable ? 'selected' : '' }}
+                            >
+                                {{ $responsable->nom ?? $responsable }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
             </div>
             
             <div>

@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Tasca</title>
+    <title>Crear Responsable</title>
     <!-- Font de Google: Poppins per un aspecte modern i coherent -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --color-primary-create: #28a745; /* Verd per a crear/guardar */
+            --color-primary-create: #007bff; /* Blau per a la gestió d'usuaris */
             --color-bg: #f7f9fc; /* Fons clar */
             --color-card-bg: #ffffff; /* Fons del formulari */
             --color-shadow: rgba(0, 0, 0, 0.1);
             --color-text: #333;
-            --color-link: #007bff; /* Blau per a l'enllaç de retorn */
+            --color-link: #6c757d; /* Gris per a l'enllaç de retorn */
         }
 
         body {
@@ -31,7 +31,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
         }
 
         h1 {
@@ -62,7 +62,7 @@
             font-size: 0.95em;
         }
 
-        input[type="text"], textarea, select {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px;
             box-sizing: border-box;
@@ -71,18 +71,40 @@
             font-size: 1em;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        input[type="text"]:focus, textarea:focus, select:focus {
+        input[type="text"]:focus, input[type="number"]:focus {
             border-color: var(--color-primary-create);
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1); /* Ombra verda de focus */
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1); /* Ombra blava de focus */
             outline: none;
         }
 
-        textarea { 
-            resize: vertical; 
-            height: 120px; 
+        /* Missatges d'error i èxit */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
-        
-        /* Botó d'acció primària (Crear Tasca) - Verd */
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.85em;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Botó d'acció primària (Crear Responsable) - Blau */
         .primary-btn {
             width: 100%;
             background-color: var(--color-primary-create);
@@ -94,10 +116,10 @@
             font-size: 1.1em;
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
         }
         .primary-btn:hover {
-            background-color: #1e7e34;
+            background-color: #0056b3;
             transform: translateY(-1px);
         }
 
@@ -119,60 +141,60 @@
 </head>
 <body>
     <div class="container">
-        <h1>Crear Tasca Nova</h1>
+        <h1>Afegir Nou Responsable</h1>
 
-        <!-- El formulari apunta a la ruta 'tasca.store' que fa servir el mètode store del controlador -->
-        <form action="{{ route('tasca.store') }}" method="POST">
+        <!-- Mostra missatge d'èxit si existeix -->
+        @if (session('success'))
+            <div class="message success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Mostra errors de validació -->
+        @if ($errors->any())
+            <div class="message error">
+                <strong>S'han trobat errors:</strong>
+                <ul style="margin-top: 5px; padding-left: 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- El formulari apunta a la ruta 'responsable.store' -->
+        <form action="{{ route('responsable.store') }}" method="POST">
             @csrf
             
             <div>
-                <label for="titol">Títol:</label>
-                <input type="text" id="titol" name="titol" value="{{ old('titol') }}" required>
+                <label for="nom">Nom:</label>
+                <input type="text" id="nom" name="nom" value="{{ old('nom') }}" required>
+                @error('nom')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
             
             <div>
-                <label for="descripcio">Descripció:</label>
-                <textarea id="descripcio" name="descripcio">{{ old('descripcio') }}</textarea>
+                <label for="cognom">Cognom:</label>
+                <input type="text" id="cognom" name="cognom" value="{{ old('cognom') }}" required>
+                @error('cognom')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
             
             <div>
-                <label for="prioritat">Prioritat:</label>
-                <select id="prioritat" name="prioritat">
-                    <option value="Baixa" {{ old('prioritat') == 'Baixa' ? 'selected' : '' }}>Baixa</option>
-                    <option value="Mitjana" {{ old('prioritat') == 'Mitjana' ? 'selected' : '' }}>Mitjana</option>
-                    <option value="Alta" {{ old('prioritat') == 'Alta' ? 'selected' : '' }}>Alta</option>
-                </select>
+                <label for="edat">Edat:</label>
+                <input type="number" id="edat" name="edat" value="{{ old('edat') }}" required min="18">
+                @error('edat')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
             </div>
             
-            <div>
-                <label for="responsable">Responsable:</label>
-                <!-- CANVI: Utilitzem un select per carregar dinàmicament els responsables -->
-                <select id="responsable" name="responsable">
-                    <option value="" {{ old('responsable') == '' ? 'selected' : '' }}>Sense assignar</option>
-                    @foreach($responsables as $responsable)
-                        <!-- Assumim que Responsable té un camp 'nom' i el seu ID es pot utilitzar com a valor (o el nom si el camp de tasca és string) -->
-                        <option value="{{ $responsable->nom }}" {{ old('responsable') == $responsable->nom ? 'selected' : '' }}>
-                            {{ $responsable->nom }}
-                        </option>
-                    @endforeach
-                </select>
-                <!-- Fi del CANVI -->
-            </div>
-            
-            <div>
-                <label for="estat">Estat Inicial:</label>
-                <select id="estat" name="estat">
-                    <!-- Per defecte, la nova tasca es crearà a 'pendents' -->
-                    <option value="pendents" {{ old('estat') == 'pendents' ? 'selected' : '' }}>Pendents</option>
-                    <option value="en_proces" {{ old('estat') == 'en_proces' ? 'selected' : '' }}>En procés</option>
-                    <option value="completades" {{ old('estat') == 'completades' ? 'selected' : '' }}>Completades</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="primary-btn">Crear Tasca</button>
+            <button type="submit" class="primary-btn">Crear Responsable</button>
         </form>
 
         <div style="text-align: center;">
+            <!-- CANVI: Ara redirigeix al Kanban en lloc de la llista de responsables -->
             <a href="{{ route('tasca.index') }}" class="link-return">← Tornar al Kanban</a>
         </div>
     </div>

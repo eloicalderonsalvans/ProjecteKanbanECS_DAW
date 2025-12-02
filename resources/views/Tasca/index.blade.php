@@ -50,12 +50,30 @@
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s;
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            display: inline-block;
         }
         .primary-btn:hover {
             background-color: #0056b3;
             transform: translateY(-1px);
         }
         
+        /* Estils per al botó secundari (Usat al Modal) */
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: var(--color-text);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+        }
+
         /* Contenidor Kanban */
         .kanban {
             display: flex;
@@ -69,6 +87,7 @@
             background: var(--color-column-bg);
             padding: 15px;
             min-width: 320px; /* Fila la columna lleugerament més ampla */
+            flex-shrink: 0; /* Important per al layout horitzontal */
             flex-grow: 1;
             border-radius: 10px; /* Més arrodonit */
             box-shadow: 0 6px 12px var(--color-shadow); /* Ombra més profunda */
@@ -162,7 +181,7 @@
         .Mitjana { 
             background-color: #ffc107; 
             color: #333; /* Forcem text fosc */
-        }    
+        }    
         .Mitjana .delete-btn { color: #856404; } 
         .Mitjana .card-actions a { color: #007bff; } 
         .Alta { background-color: #dc3545; color: var(--color-card-text); } /* vermell */
@@ -178,13 +197,61 @@
         .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .message.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+        /* Estils del Modal de Confirmació Personalitzat (substitut de window.confirm) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            color: var(--color-text);
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+        .modal-overlay.open .modal-content {
+            transform: translateY(0);
+        }
+        #confirm-message {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Kanban de Tasques</h1>
         <nav>
-            <!-- L'enllaç a Kanban s'ha eliminat, només queda el botó de Crear Tasca -->
+            <!-- NOU BOTÓ: Crear Responsable -->
+            <a href="{{ route('responsable.create') }}" class="primary-btn" style="margin-right: 10px;">Crear Responsable</a>
+            <!-- Botó existent: Crear Tasca -->
             <a href="{{ route('tasca.create') }}" class="primary-btn">Crear Tasca</a>
         </nav>
     </header>
@@ -206,21 +273,61 @@
                         <div class="card-actions">
                             <a href="{{ route('tasca.edit', $tasca->id_tasca) }}">Editar</a>
                             <!-- Botó d'Eliminar -->
-                            <button class="delete-btn" data-id="{{ $tasca->id_tasca }}">Eliminar</button>
+                            <button class="delete-btn" data-id="{{ $tasca->id_tasca }}" data-titol="{{ $tasca->titol }}">Eliminar</button>
                         </div>
                     </li>
                 @endforeach
             </ul>
         </div>
     @endforeach
-</div>
+    </div>
+
+    <!-- Custom Confirmation Modal Structure (Reemplaça window.confirm()) -->
+    <div id="custom-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <p id="confirm-message">Estàs segur que vols eliminar aquesta tasca?</p>
+            <div class="modal-actions">
+                <button id="confirm-yes" class="primary-btn">Sí, Eliminar</button>
+                <button id="confirm-no" class="secondary-btn">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
         const statusMessage = document.getElementById('status-message');
+        
+        // Variables per al modal de confirmació
+        const customConfirmModal = document.getElementById('custom-confirm-modal');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmYesBtn = document.getElementById('confirm-yes');
+        const confirmNoBtn = document.getElementById('confirm-no');
+        let pendingAction = null; // Funció de callback per a l'acció
 
-        // Funció per mostrar missatges
+        // Funció per mostrar el modal de confirmació
+        function showCustomConfirm(message, callback) {
+            confirmMessage.textContent = message;
+            pendingAction = callback;
+            customConfirmModal.classList.add('open');
+        }
+
+        // Handler pel botó Sí del modal
+        confirmYesBtn.addEventListener('click', () => {
+            customConfirmModal.classList.remove('open');
+            if (pendingAction) {
+                pendingAction();
+                pendingAction = null; 
+            }
+        });
+
+        // Handler pel botó No del modal
+        confirmNoBtn.addEventListener('click', () => {
+            customConfirmModal.classList.remove('open');
+            pendingAction = null;
+        });
+
+        // Funció per mostrar missatges de feedback
         function showMessage(type, text) {
             statusMessage.className = `message ${type}`;
             statusMessage.textContent = text;
@@ -232,11 +339,11 @@
 
         // Funció per gestionar l'eliminació
         function handleDelete(id, listItem) {
-            // Pas 1: Simulació de Confirmació (Això hauria de ser un modal personalitzat)
-            showMessage('warning', `Confirmant eliminació de la tasca ${id}...`);
+            showMessage('warning', `Eliminant la tasca ${id}...`);
 
             listItem.classList.add('deleting');
             
+            // Simulem l'eliminació amb Fetch API (assumint que la ruta Laravel existeix)
             fetch("{{ url('tasca') }}/" + id, {
                 method: "DELETE",
                 headers: {
@@ -253,9 +360,9 @@
             })
             .then(data => {
                 if (data.success) {
-                    // Pas 3: Eliminació de l'element de la llista (DOM)
+                    // Eliminació de l'element de la llista (DOM)
                     listItem.remove();
-                    showMessage('success', `Tasca ${id} eliminada correctament. Recarregant la pàgina...`);
+                    showMessage('success', `Tasca eliminada correctament. Recarregant la pàgina per reordenar...`);
                     
                     // Recàrrega de la pàgina per assegurar-nos que l'ordenació es manté coherent al backend
                     setTimeout(() => {
@@ -302,21 +409,29 @@
                             showMessage('error', 'Error en l\'actualització del Kanban.');
                         }
                     })
-                    .catch(err => console.error('Error:', err));
+                    .catch(err => {
+                        showMessage('error', `Error de xarxa en actualitzar el Kanban: ${err.message}`);
+                        console.error('Error:', err);
+                    });
                 }
             });
         });
 
-        // Associació de la funció d'esborrat als botons
+        // Associació de la funció d'esborrat als botons (utilitzant el modal personalitzat)
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function(e) {
                 const id = this.dataset.id;
+                const titol = this.dataset.titol;
                 const listItem = this.closest('li');
                 
-                // CRÍTICA: Aquesta línia utilitza confirm(). En un projecte real, caldria substituir-ho per un modal
-                if (confirm('Estàs segur que vols eliminar aquesta tasca?')) { 
-                    handleDelete(id, listItem);
-                }
+                // Utilitzem el modal personalitzat en lloc de window.confirm()
+                showCustomConfirm(
+                    `Estàs segur que vols eliminar la tasca "${titol}"?`,
+                    () => {
+                        // Callback que s'executa si l'usuari prem "Sí, Eliminar"
+                        handleDelete(id, listItem);
+                    }
+                );
             });
         });
     </script>
