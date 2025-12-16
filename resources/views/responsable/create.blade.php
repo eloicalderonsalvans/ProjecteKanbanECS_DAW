@@ -9,12 +9,12 @@
 
     <style>
         :root {
-            --color-primary-create: #007bff; /* Blau per a la gestió d'usuaris */
+            --color-primary-create: #FFD700; /* Blau per a la gestió d'usuaris */
             --color-bg: #f7f9fc; /* Fons clar */
             --color-card-bg: #ffffff; /* Fons del formulari */
             --color-shadow: rgba(0, 0, 0, 0.1);
             --color-text: #333;
-            --color-link: #6c757d; /* Gris per a l'enllaç de retorn */
+            --color-link: #FFD700; /* Gris per a l'enllaç de retorn */
         }
 
         body {

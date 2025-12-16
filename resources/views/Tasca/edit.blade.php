@@ -9,7 +9,7 @@
 
     <style>
         :root {
-            --color-primary: #007bff; /* Blau primari */
+            --color-primary: #FFD700; /*Color del boto */
             --color-bg: #f7f9fc; /* Fons clar */
             --color-card-bg: #ffffff; /* Fons del formulari */
             --color-shadow: rgba(0, 0, 0, 0.1);

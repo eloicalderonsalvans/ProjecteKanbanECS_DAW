@@ -9,12 +9,12 @@
 
     <style>
         :root {
-            --color-primary-create: #28a745; /* Verd per a crear/guardar */
+            --color-primary-create: #e7d111ff; /*Color per a crear/guardar */
             --color-bg: #f7f9fc; /* Fons clar */
             --color-card-bg: #ffffff; /* Fons del formulari */
             --color-shadow: rgba(0, 0, 0, 0.1);
             --color-text: #333;
-            --color-link: #007bff; /* Blau per a l'enllaç de retorn */
+            --color-link: #e7d111ff;; /* Color enllaç de retorn */
         }
 
         body {
@@ -82,7 +82,7 @@
             height: 120px; 
         }
         
-        /* Botó d'acció primària (Crear Tasca) - Verd */
+        /* Botó d'acció primària (Crear Tasca) */
         .primary-btn {
             width: 100%;
             background-color: var(--color-primary-create);

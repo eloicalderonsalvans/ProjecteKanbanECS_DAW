@@ -11,7 +11,10 @@
             /* COLORS */
             --color-primary-gold: #FFD700;
             --color-secondary-pink: #ff69b4;
+            --color-third-dark: #1a1a1a;
             --color-text-dark: #1a1a1a;
+            --color-text-pink: #ff69b4;
+            --color-buttons-create: #FFD700;;
             
             --color-bg: #b6f6ffff;
             --color-column-bg: #ffffff;
@@ -48,7 +51,7 @@
 
         /* BOTONS */
         .primary-btn {
-            background-color: var(--color-primary-gold);
+            background-color: var(--color-buttons-create);
             color: var(--color-card-text-dark);
             padding: 10px 20px;
             text-decoration: none;
@@ -104,7 +107,7 @@
             font-size: 1.4em;
             margin-top: 0;
             margin-bottom: 25px;
-            color: var(--color-secondary-pink);
+            color: var(--color-text-pink);
             border-bottom: 3px solid var(--color-primary-gold);
             padding-bottom: 10px;
         }
@@ -178,7 +181,7 @@
 
         /* COLORS PER PRIORITAT */
         .Baixa { 
-            background-color: #343a40; /* Negre */
+            background-color: var(--color-third-dark);
             color: var(--color-card-text-light);
             --card-link-color: var( --color-card-text-light);
             --card-delete-color: rgba(255, 255, 255, 0.9);
@@ -250,7 +253,7 @@
         }
         .dot-alta { background-color: var(--color-secondary-pink); }
         .dot-mitjana { background-color: var(--color-primary-gold); }
-        .dot-baixa { background-color: #343a40; }
+        .dot-baixa { background-color: var(--color-third-dark); }
 
         .legend-text {
             display: flex;
@@ -294,6 +297,7 @@
     <header>
         <h1>Kanban de Tasques</h1>
         <nav>
+            <a href="{{ route('responsable.index') }}" class="primary-btn" style="margin-right: 10px;">Llistar Responsables</a>
             <a href="{{ route('responsable.create') }}" class="primary-btn" style="margin-right: 10px;">Crear Responsable</a>
             <a href="{{ route('tasca.create') }}" class="primary-btn">Crear Tasca</a>
         </nav>
@@ -329,7 +333,6 @@
                 <div class="color-dot dot-alta"></div>
                 <div class="legend-text">
                     <span class="legend-title">Alta</span>
-                    <span class="legend-desc">Urgent / Crític</span>
                 </div>
             </div>
 
@@ -337,7 +340,6 @@
                 <div class="color-dot dot-mitjana"></div>
                 <div class="legend-text">
                     <span class="legend-title">Mitjana</span>
-                    <span class="legend-desc">Important</span>
                 </div>
             </div>
 
@@ -345,7 +347,6 @@
                 <div class="color-dot dot-baixa"></div>
                 <div class="legend-text">
                     <span class="legend-title">Baixa</span>
-                    <span class="legend-desc">Normal / En espera</span>
                 </div>
             </div>
         </div>

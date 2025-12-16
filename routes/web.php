@@ -5,17 +5,6 @@ use App\Http\Controllers\TascaController;
 // Caldrà crear aquest controlador per gestionar els responsables
 use App\Http\Controllers\ResponsableController; 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 // ===================================
 // RUTES DE GESTIÓ DE TASQUES (Kanban)
 // ===================================
@@ -41,9 +30,6 @@ Route::post('/tasca/kanban/update', [TascaController::class, 'updateKanban'])->n
 // ===================================
 // NOVES RUTES DE GESTIÓ DE RESPONSABLES
 // ===================================
-
-// Rutes per al CRUD de Responsables
-// Nota: Necessitaràs crear el ResponsableController si no el tens.
 
 // Crear responsable
 Route::get('/responsable/create', [ResponsableController::class, 'create'])->name('responsable.create');

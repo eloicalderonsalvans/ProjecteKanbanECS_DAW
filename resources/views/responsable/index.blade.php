@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-primary: #007bff; /* Blau per a botons d'acció */
+            --color-primary: #FFD700; /* Or */
             --color-success: #28a745; /* Verd per a missatges i botó Creació */
             --color-danger: #dc3545; /* Vermell per a eliminar */
             --color-bg: #f7f9fc;
@@ -69,15 +69,15 @@
             background-color: #1e7e34;
         }
 
-        /* Botó d'acció (Taula) */
+        /* Botó d'acció (Taula) - Ajustat per coherència */
         .btn-edit {
             background-color: var(--color-primary);
-            color: white;
+            color: var(--color-text); /* Canviat de 'white' a 'var(--color-text)' */
             padding: 5px 10px;
             font-size: 0.9em;
         }
         .btn-edit:hover {
-            background-color: #0056b3;
+            background-color: #e0b800; /* Or més fosc */
         }
 
         /* Botó d'esborrat (Taula) */
@@ -127,7 +127,7 @@
         }
         
         .actions {
-            white-space: nowrap; /* Evita que els botons es trenquin */
+            white-space: nowrap; 
         }
         
     </style>
@@ -155,14 +155,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- 💡 Assumim que $responsables és passat des del controlador --}}
                     @foreach ($responsables as $responsable)
                         <tr>
                             <td>{{ $responsable->id_resposable }}</td>
                             <td>{{ $responsable->nom_complet }}</td>
                             <td>{{ $responsable->edat }}</td>
                             <td class="actions">
-                                <a href="{{ route('responsable.edit', $responsable->id_resposable) }}" class="btn btn-edit">Editar</a>
-                                
+                                {{-- Formulari per Eliminar --}}
                                 <form action="{{ route('responsable.destroy', $responsable->id_resposable) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
